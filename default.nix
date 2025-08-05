@@ -7,9 +7,14 @@ let
   pkgs = import nixpkgs { config = {}; overlays = []; };
 in
 pkgs.mkShellNoCC {
-  name = "bar";
+  name = "arduino-dev";
   packages = with pkgs; [
     arduino-ide
-    python3 # for esp12e
+    python312 # for esp12e
+    python312Packages.keyboard
   ];
+
+  shellHook = ''
+    alias control_robot='sudo PYTHONPATH=$PYTHONPATH ${pkgs.python312}/bin/python3 scripts/udp_client.py'
+  '';
 }
