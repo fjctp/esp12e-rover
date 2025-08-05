@@ -1,14 +1,17 @@
 # ESP12e Rover
 WiFi controlled rover with ESP-12e.
 
+<img src="./asset/rover.jpg" alt="Alt Text" width="300">
+
 # How does it work
 The ESP-12e rover is controlled by a keyboard (arrow keys) through a wireless access point (SSID: `rover-df473fcc`) created by ESP-12e.
 
-![](./asset/esp12e-rover.drawio.svg)
+<img src="./asset/esp12e-rover.drawio.svg" alt="Alt Text" width="600">
 
-**UDP package**
-A package has a length of 4 characters.
+## Message
+A command message is sent to the rover from a computer using UDP, and the message contains the left anf right motor direction and speed commands. 
 
+There are 4 characters in a message:
 - Character 1: Left motor direction ('+': forward, '-': backward)
 - Character 2: Left motor speed (0 - 127, encoded as an ASCII character. Ex. 97 -> 'a')
 - Character 3: Right motor direction (Same as left motor)
