@@ -11,10 +11,10 @@ pkgs.mkShellNoCC {
   packages = with pkgs; [
     arduino-ide
     python312 # for esp12e
-    python312Packages.keyboard
+    python312Packages.pygame
   ];
 
   shellHook = ''
-    alias control_robot='sudo PYTHONPATH=$PYTHONPATH ${pkgs.python312}/bin/python3 scripts/udp_client.py'
+    alias control_robot='sudo PYTHONPATH=$PYTHONPATH XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR ${pkgs.python312}/bin/python3 scripts/udp_client.py'
   '';
 }
