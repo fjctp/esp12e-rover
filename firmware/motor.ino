@@ -18,7 +18,7 @@ void setup_motor(void) {
 
 void update_motor(int valLeft, int valRight) {
   Serial.printf("Motor: %d, %d\n", valLeft, valRight);
-.......................
+  
   // Set direction
   digitalWrite(MOTOR_DIR_L, valLeft > 0 ? HIGH : LOW);
   digitalWrite(MOTOR_DIR_R, valRight > 0 ? HIGH : LOW);
