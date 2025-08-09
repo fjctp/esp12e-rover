@@ -42,8 +42,9 @@ There are 4 characters in a message:
 1. Open the project with Arduino IDE.
     - Install esp9266 board support for Arduino IDE.
     - Configure IDE for ESP-12e. (Tool -> Board and Port)
-2. Upload sketch (`.ino`) to ESP-12e.
-3. Power up ESP-12e
-4. On the compute, connect to wireless access point (SSID: `rover-df473fcc`).
-5. Run `sudo python3 scripts/udp_client.py`
+2. Update WiFi SSID and password in [wifi_ap.ino](./firmware/wifi_ap.ino)
+3. Upload sketch (`.ino`) to ESP-12e.
+4. Power up ESP-12e
+5. On the compute, connect to wireless access point defined in Step 2.
+6. Run `sudo python3 scripts/udp_client.py`
     - Install dependencies: `keyboard`
