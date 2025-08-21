@@ -6,11 +6,9 @@ import time
 
 import pygame
 
-DEBUG = False
-# JOYSTICK_DEADZONE = 0.1 # For method 1
-JOYSTICK_DEADZONE = 10 # For method 2
+CONTROL_METHOD = 3
 
-def send_udp_message(ip: str, port: int, message: str):
+def send_udp_message(ip: str, port: int, message: str, debug: bool):
   """
   Send a UDP message to a UDP server.
 
@@ -25,7 +23,7 @@ def send_udp_message(ip: str, port: int, message: str):
   try:
     # Send the message to the server
     sock.sendto(message.encode(), (ip, port))
-    if DEBUG:
+    if debug:
       print(f"Message '{message}' sent to {ip}:{port}")
 
   finally:
@@ -96,6 +94,7 @@ if __name__ == "__main__":
   parser.add_argument("ip", nargs="?", default="192.168.4.1", help="The IP address of the server")
   parser.add_argument("port", nargs="?", default=1234, type=int, help="The port number to send the message to")
   parser.add_argument("max_speed", nargs="?", default=100, type=int, help="Max speed, 0 - 127")
+  parser.add_argument("--debug", action='store_true', help="Enable debug mode")
 
   # Parse the command-line arguments
   args = parser.parse_args()
@@ -119,25 +118,27 @@ if __name__ == "__main__":
   try:
     while True:
       pygame.event.pump()  # Process events
-      if False:
+      
+      if CONTROL_METHOD == 1:
         # Method 1: Using left and right y-axis joysticks
-        yleft = -1 * deadzone(joystick.get_axis(1), JOYSTICK_DEADZONE)
-        yright = -1 * deadzone(joystick.get_axis(3), JOYSTICK_DEADZONE)
+        yleft = -1 * deadzone(joystick.get_axis(1), 0.1)
+        yright = -1 * deadzone(joystick.get_axis(3), 0.1)
 
         cmdLeft = rescale(yleft, (-1, 1), (-127, 127))
         cmdRight = rescale(yright, (-1, 1), (-127, 127))
 
-        if DEBUG:
+        if args.debug:
           print(f"Left: {yleft}/{cmdLeft}, Right: {yright}/{cmdRight}")
-        send_udp_message(args.ip, args.port, encode(cmdLeft, cmdRight))
-      else:
+        else:
+          send_udp_message(args.ip, args.port, encode(cmdLeft, cmdRight), args.debug)
+      elif CONTROL_METHOD == 2:
         # Method 2: Using left and right trigger for speed and the button above for direction.
         if isInitialized:
           yleft = joystick.get_axis(4)
           yright = joystick.get_axis(5)
 
-          spdLeft = deadzone(rescale(yleft, (-1, 1), (0, 127)), JOYSTICK_DEADZONE)
-          spdRight = deadzone(rescale(yright, (-1, 1), (0, 127)), JOYSTICK_DEADZONE)
+          spdLeft = deadzone(rescale(yleft, (-1, 1), (0, 127)), 10)
+          spdRight = deadzone(rescale(yright, (-1, 1), (0, 127)), 10)
 
           dirLeft = 1 if joystick.get_button(9) == 0 else -1 # forward if pressed
           dirRight = 1 if joystick.get_button(10) == 0 else -1 # forward if pressed
@@ -145,15 +146,33 @@ if __name__ == "__main__":
           cmdLeft = dirLeft * spdLeft
           cmdRight = dirRight * spdRight
 
-          if DEBUG:
+          if args.debug:
             print(f"Left: {yleft}/{cmdLeft}, Right: {yright}/{cmdRight}")
-          send_udp_message(args.ip, args.port, encode(int(cmdLeft), int(cmdRight)))
+          else:
+            send_udp_message(args.ip, args.port, encode(int(cmdLeft), int(cmdRight)), args.debug)
         else:
           # Wait for a button press or an axis movement, 
           # otherwise axis 4 and 5 would return invalid min. value (0)
           if joystick.get_button(9) == 1 or joystick.get_button(10) == 1:
             isInitialized = True
+      elif CONTROL_METHOD == 3:
+        # Method 3: Using left joysticks, x and y axis
+        yleft = -1 * deadzone(joystick.get_axis(1), 0.1)
+        xleft = deadzone(joystick.get_axis(0), 0.2)
 
+        cmdSpd = rescale(yleft, (-1, 1), (-127, 127))
+        cmdDiff = rescale(xleft, (-1, 1), (-127, 127))
+
+        cmdLeft = int(cmdSpd + cmdDiff)
+        cmdRight = int(cmdSpd - cmdDiff)
+
+        if args.debug:
+          print(f"Joy: {cmdSpd}/{cmdDiff}, Left: {cmdLeft}, Right: {cmdRight}")
+        else:
+          send_udp_message(args.ip, args.port, encode(cmdLeft, cmdRight), args.debug)
+      else:
+        raise KeyError
+      
       time.sleep(1/100)
 
   except KeyboardInterrupt:

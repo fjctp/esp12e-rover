@@ -32,9 +32,10 @@ There are 4 characters in a message:
 - Battery (e.g. 9V battery)
 
 **Software**
-- Python3.12
-  - 3rd party package: `keyboard`
-- Arduino IDE (optional for firmware development)
+- Python3.12 with following packages
+  - Keyboard control: `keyboard`
+  - Joystick control: `pygame`
+- Arduino IDE (For firmware development)
   - Additional board support: `arduino-esp8266`
 
 # Run
@@ -47,4 +48,4 @@ There are 4 characters in a message:
 4. Power up ESP-12e
 5. On the compute, connect to wireless access point defined in Step 2.
 6. Run `sudo python3 scripts/udp_client.py`
-    - Install dependencies: `keyboard`
+    - For Nix, redefine environment variables: `sudo PYTHONPATH=$PYTHONPATH XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR python3 scripts/udp_client.py`
