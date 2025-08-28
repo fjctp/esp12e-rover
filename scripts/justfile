@@ -1,7 +1,13 @@
 
 run:
+  # Run client
   sudo PYTHONPATH=${PYTHONPATH} XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR} \
     python3 udp_client.py --joystick
 
 test:
+  # Run unit tests
   pytest ./lib/{test_math.py,test_payload.py} -v
+
+cov:
+  # Check test coverage
+  pytest --cov=lib --cov-config .coveragerc lib

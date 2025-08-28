@@ -14,9 +14,9 @@ class Test_MotorCmd:
     assert a.dir == '+'
     assert a.speed == 127
   
-  def test_encode(self):
+  def test_toString(self):
     a = MotorCmd('+', 100)
-    assert a.encode() == '+d'
+    assert a.toString() == '+d'
 
 class Test_RoverCmd():
   def test_constructor(self):
@@ -26,8 +26,8 @@ class Test_RoverCmd():
     assert b.left == a
     assert b.right == a
 
-  def test_encode(self):
+  def test_toString(self):
     a = MotorCmd('+', 100)
     b = RoverCmd(a, a)
 
-    assert b.encode() == '+d+d'
+    assert b.toString() == '+d+d'
