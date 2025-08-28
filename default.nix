@@ -11,8 +11,9 @@ pkgs.mkShellNoCC {
   packages = with pkgs; [
     arduino-ide
     python312 # for esp12e
+    python312Packages.pytest
     python312Packages.pygame
-    #python312Packages.keyboard # for keyboard control
+    python312Packages.keyboard # for keyboard control
   ];
 
   shellHook = ''

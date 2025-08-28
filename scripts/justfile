@@ -1,0 +1,7 @@
+
+run:
+  sudo PYTHONPATH=${PYTHONPATH} XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR} \
+    python3 udp_client.py --joystick
+
+test:
+  pytest ./lib/{test_math.py,test_payload.py} -v
